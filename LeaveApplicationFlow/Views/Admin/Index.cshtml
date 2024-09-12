@@ -1,0 +1,83 @@
+﻿@model IEnumerable<LeaveApplicationFlow.Models.AdminViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Admin Page</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Username</td>
+                <td>@user.Email</td>
+                <td>@user.RoleName</td>
+                <td>
+                    <!-- Edit Button -->
+                    <a href="@Url.Action("Edit", "Admin", new { id = user.UserId })" class="btn btn-primary">Edit</a>
+
+                    <!-- Delete Button -->
+                    <button type="button" class="btn btn-secondary mt-2" data-toggle="modal" data-target="#deleteModal-@user.UserId">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal-@user.UserId" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel-@user.UserId" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel-@user.UserId">Delete User</h5>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete @user.Username?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-secondary" onclick="deleteUser(@user.UserId)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function deleteUser(userId) {
+            console.log(userId);
+            $.ajax({
+                type: "POST",
+                url: "/Admin/Delete/" + userId,
+                success: function (response) {
+                    if (response.success) {
+                        location.reload(); // Reload the page or update the UI
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
+    </script>
+}
+
+<!-- Logout Button -->
+<div class="btn-group" role="group">
+    <!-- Logout Button -->
+    <a href="@Url.Action("Logout", "Account")" class="btn btn-danger">Logout</a>
+</div>

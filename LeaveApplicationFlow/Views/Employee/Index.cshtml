@@ -1,0 +1,44 @@
+﻿@model IEnumerable<LeaveApplicationFlow.Models.LeaveRequest>
+
+@{
+    ViewBag.Title = "My Leave Requests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="m-0">Hello, @ViewBag.Username</h2>
+<h2>My Leave Requests</h2>
+
+<div class="btn-toolbar" role="toolbar">
+    <div class="btn-group mr-2" role="group">
+        <a href="@Url.Action("ApplyLeave", "Employee")" class="btn btn-primary">Apply Leave</a>
+    </div>
+    <div class="btn-group mr-2" role="group">
+        <a href="@Url.Action("LeaveBalances", "Employee")" class="btn btn-secondary">Leave Balance</a>
+    </div>
+    <div class="btn-group" role="group">
+        <!-- Logout Button -->
+        <a href="@Url.Action("Logout", "Account")" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Leave Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var leaveRequest in Model)
+        {
+            <tr>
+                <td>@leaveRequest.LeaveType</td>
+                <td>@leaveRequest.StartDate.ToShortDateString()</td>
+                <td>@leaveRequest.EndDate.ToShortDateString()</td>
+                <td>@leaveRequest.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

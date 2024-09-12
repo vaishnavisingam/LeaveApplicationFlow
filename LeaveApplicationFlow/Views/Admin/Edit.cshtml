@@ -1,0 +1,72 @@
+﻿@model LeaveApplicationFlow.Models.UserEditViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Edit User";
+}
+
+<h2>@ViewData["Title"]</h2>
+<div class="mb-4">
+    <a href="@Url.Action("Index", "Admin")" class="btn btn-info">
+        <i class="fas fa-arrow-left"></i> Back to Admin Index
+    </a>
+</div>
+
+@using (Html.BeginForm("Edit", "Admin", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.UserId)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Username, new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.Username, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Email, new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.RoleId, "Role", new { @class = "control-label" })
+        @Html.DropDownListFor(model => model.RoleId, Model.Roles, "-- Select Role --", new { @class = "form-control", id = "roleDropdown" })
+        @Html.ValidationMessageFor(model => model.RoleId, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group" id="levelContainer" style="display:none;">
+        @Html.LabelFor(model => model.Level, "Level", new { @class = "control-label" })
+        @Html.DropDownListFor(model => model.Level, Model.Levels, "-- Select Level --", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="flex mt-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <br />
+        <br />
+        <a href="@Url.Action("Index", "Admin")" class="btn btn-secondary">Cancel</a>
+    </div>
+}
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        var roleDropdown = document.getElementById("roleDropdown");
+        var levelContainer = document.getElementById("levelContainer");
+
+        function toggleLevelDropdown() {
+            var selectedRoleId = roleDropdown.value;
+            if (selectedRoleId === "2") {
+                levelContainer.style.display = "block";
+            } else {
+                levelContainer.style.display = "none";
+            }
+        }
+
+        // Initial check on page load
+        toggleLevelDropdown();
+
+        // Attach event listener for change event
+        roleDropdown.addEventListener("change", toggleLevelDropdown);
+    });
+</script>

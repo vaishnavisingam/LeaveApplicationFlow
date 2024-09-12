@@ -1,0 +1,60 @@
+﻿@model IEnumerable<LeaveApplicationFlow.Models.PendingLeaveRequestViewModel>
+
+@{
+    ViewData["Title"] = "Pending Leave Requests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+    <a href="@Url.Action("ShowAllLeaveRequests", "Manager")" class="btn btn-primary" style="margin-right: 10px;">Show All Requests</a>
+    <a href="@Url.Action("PendingRequests", "Manager")" class="btn btn-secondary" style="margin-right: 10px;">Pending Requests</a>
+    <a href="@Url.Action("Logout", "Account")" class="btn btn-danger" style="margin-right: 10px;">Logout</a>
+    <a href="@Url.Action("Index", "Manager")" class="btn btn-info">
+        <i class="fas fa-arrow-left"></i> Back to Manager Index
+    </a>
+</div>
+
+
+@if (Model != null && Model.Any())
+{
+    <p>Total Pending Requests: @Model.Count()</p> <!-- Display the total number of pending requests -->
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Actions</th> <!-- Column for action buttons -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model)
+            {
+                <tr>
+                    <td>@request.Username</td>
+                    <td>@request.LeaveType</td>
+                    <td>@request.StartDate.ToShortDateString()</td>
+                    <td>@request.EndDate.ToShortDateString()</td>
+                    <td>@request.Status</td>
+                    <td>
+                        @if (request.Status == "Pending")
+                        {
+                            <a href="@Url.Action("ApproveRequest", "Manager", new { username = request.Username, leaveType = request.LeaveType, startDate = request.StartDate, endDate = request.EndDate })" class="btn btn-success">Approve</a>
+                            <a href="@Url.Action("RejectRequest", "Manager", new { username = request.Username, leaveType = request.LeaveType, startDate = request.StartDate, endDate = request.EndDate })" class="btn btn-danger">Reject</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No pending leave requests available.</p>
+}
+

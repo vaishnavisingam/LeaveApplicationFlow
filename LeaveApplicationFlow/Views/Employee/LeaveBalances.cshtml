@@ -1,0 +1,30 @@
+﻿@model IEnumerable<LeaveApplicationFlow.Models.LeaveBalanceViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Leave Balances</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Leave Type</th>
+            <th>Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var leaveBalance in Model)
+        {
+            <tr>
+                <td>@leaveBalance.LeaveType</td>
+                <td>@leaveBalance.Balance</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="mb-4">
+    <a href="@Url.Action("Index", "Employee")" class="btn btn-info">
+        <i class="fas fa-arrow-left"></i> Back to Employee Index
+    </a>
+</div>

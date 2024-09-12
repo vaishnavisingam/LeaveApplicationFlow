@@ -1,0 +1,51 @@
+﻿@model IEnumerable<LeaveApplicationFlow.Models.LeaveRequestViewModel>
+
+@{
+    ViewData["Title"] = "All Leave Requests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+    <a href="@Url.Action("ShowAllLeaveRequests", "Manager")" class="btn btn-primary" style="margin-right: 10px;">Show All Requests</a>
+    <a href="@Url.Action("PendingRequests", "Manager")" class="btn btn-secondary" style="margin-right: 10px;">Pending Requests</a>
+    <a href="@Url.Action("Logout", "Account")" class="btn btn-danger" style="margin-right: 10px;">Logout</a>
+    <a href="@Url.Action("Index", "Manager")" class="btn btn-info">
+        <i class="fas fa-arrow-left"></i> Back to Manager Index
+    </a>
+</div>
+
+
+@if (Model != null && Model.Any())
+{
+    <p>Total Requests: @Model.Count()</p> <!-- Display the total number of requests -->
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model)
+            {
+                <tr>
+                    <td>@request.Username</td>
+                    <td>@request.LeaveType</td>
+                    <td>@request.StartDate.ToShortDateString()</td>
+                    <td>@request.EndDate.ToShortDateString()</td>
+                    <td>@request.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No leave requests available.</p>
+}

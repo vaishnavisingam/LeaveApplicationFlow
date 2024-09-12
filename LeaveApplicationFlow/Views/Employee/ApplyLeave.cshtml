@@ -1,0 +1,191 @@
+﻿@model LeaveApplicationFlow.Models.LeaveRequest
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Apply for Leave</h2>
+<div class="mb-4">
+    <a href="@Url.Action("Index", "Employee")" class="btn btn-info">
+        <i class="fas fa-arrow-left"></i> Back to Employee Index
+    </a>
+</div>
+
+@if (TempData["AlertMessage"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["AlertMessage"]
+    </div>
+}
+
+<form asp-action="ApplyLeave" method="post" id="leaveForm">
+    <div class="form-group">
+        @Html.LabelFor(model => model.LeaveType, new { @class = "control-label" })
+        @Html.DropDownListFor(model => model.LeaveType, (IEnumerable<SelectListItem>)ViewBag.LeaveTypes, "Select Leave Type", new { @class = "form-control", id = "leaveType" })
+        <span id="leaveTypeError" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.StartDate, new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", id = "startDate", min = DateTime.Now.ToString("yyyy-MM-dd") })
+        <span id="startDateError" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.EndDate, new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", id = "endDate", min = DateTime.Now.ToString("yyyy-MM-dd") })
+        <span id="endDateError" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Remarks, new { @class = "control-label" })
+        @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control", id = "remarks" })
+        <span id="remarksError" class="text-danger"></span>
+    </div>
+    <!-- Display number of days -->
+    <div class="form-group">
+        <label class="control-label">Number of Days</label>
+        <p id="numberOfDays">0</p>
+    </div>
+    <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const numberOfDaysDisplay = document.getElementById('numberOfDays');
+
+        function calculateDays() {
+            const startDateValue = startDateInput.value;
+            const endDateValue = endDateInput.value;
+
+            if (startDateValue && endDateValue) {
+                const startDate = new Date(startDateValue);
+                const endDate = new Date(endDateValue);
+
+                if (endDate >= startDate) {
+                    const differenceInTime = endDate - startDate;
+                    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24)) + 1; // +1 to include the start date
+                    numberOfDaysDisplay.textContent = differenceInDays;
+                } else {
+                    numberOfDaysDisplay.textContent = '0';
+                }
+            } else {
+                numberOfDaysDisplay.textContent = '0';
+            }
+        }
+
+        startDateInput.addEventListener('change', calculateDays);
+        endDateInput.addEventListener('change', calculateDays);
+    });
+
+</script>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const leaveTypeSelect = document.getElementById('leaveType');
+            const remarksInput = document.getElementById('remarks');
+            const numberOfDaysDisplay = document.getElementById('numberOfDays');
+            const submitBtn = document.getElementById('submitBtn');
+
+            function validateForm() {
+                let isValid = true;
+
+                // Clear previous error messages
+                document.getElementById('leaveTypeError').textContent = '';
+                document.getElementById('startDateError').textContent = '';
+                document.getElementById('endDateError').textContent = '';
+                document.getElementById('remarksError').textContent = '';
+
+                // Validate leave type
+                if (leaveTypeSelect.value === '') {
+                    document.getElementById('leaveTypeError').textContent = 'Please select a leave type.';
+                    isValid = false;
+                }
+
+                // Validate start date
+                if (!startDateInput.value) {
+                    document.getElementById('startDateError').textContent = 'Start date is required.';
+                    isValid = false;
+                }
+
+                // Validate end date
+                if (!endDateInput.value) {
+                    document.getElementById('endDateError').textContent = 'End date is required.';
+                    isValid = false;
+                } else {
+                    // Check if end date is before start date
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    if (endDate < startDate) {
+                        document.getElementById('endDateError').textContent = 'End date cannot be before start date.';
+                        isValid = false;
+                    }
+                }
+
+                // Validate remarks
+                if (!remarksInput.value.trim()) {
+                    document.getElementById('remarksError').textContent = 'Remarks are required.';
+                    isValid = false;
+                } else if (remarksInput.value.length < 10) {
+                    document.getElementById('remarksError').textContent = 'Remarks must be at least 10 characters long.';
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            function calculateDays() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                const selectedLeaveType = leaveTypeSelect.options[leaveTypeSelect.selectedIndex].text;
+
+                if (startDate && endDate && endDate >= startDate) {
+                    const differenceInTime = endDate - startDate;
+                    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24)) + 1; // +1 to include the start date
+                    numberOfDaysDisplay.textContent = differenceInDays;
+
+                    // Example balance retrieval (this should be dynamically fetched from your backend)
+                    let leaveBalance = getLeaveBalance(selectedLeaveType); // Placeholder function
+
+
+                } else {
+                    numberOfDaysDisplay.textContent = '0';
+                }
+            }
+
+            function getLeaveBalance(leaveType) {
+                // Placeholder function - you need to implement this to get the leave balance from your server
+                return 5; // Example fixed value for demonstration
+            }
+
+            // Attach event listeners
+            startDateInput.addEventListener('change', function () {
+                if (validateForm()) {
+                    calculateDays();
+                }
+            });
+            endDateInput.addEventListener('change', function () {
+                if (validateForm()) {
+                    calculateDays();
+                }
+            });
+            leaveTypeSelect.addEventListener('change', function () {
+                if (validateForm()) {
+                    calculateDays();
+                }
+            });
+            remarksInput.addEventListener('input', function () {
+                validateForm();
+            });
+
+            // Prevent form submission if validation fails
+            document.getElementById('leaveForm').addEventListener('submit', function (event) {
+                if (!validateForm()) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+}

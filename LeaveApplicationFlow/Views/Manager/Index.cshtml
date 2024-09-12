@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Manager Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+    <!-- Button to show all requests -->
+    <a href="@Url.Action("ShowAllLeaveRequests", "Manager")" class="btn btn-secondary" style="margin-left: 10px;">Show All Leave Requests</a>
+
+    <!-- Button to show pending requests -->
+    <a href="@Url.Action("PendingRequests", "Manager")" class="btn btn-secondary" style="margin-left: 10px;">Pending Requests</a>
+
+    <!-- Button to log out -->
+    <a href="@Url.Action("Logout", "Account")" class="btn btn-danger" style="margin-left: 10px;">Logout</a>
+
+</div>
